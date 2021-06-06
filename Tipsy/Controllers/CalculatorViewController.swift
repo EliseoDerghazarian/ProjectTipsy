@@ -14,7 +14,8 @@ class CalculatorViewController: UIViewController {
     var tip = 0.10
     var numberOfPeople = 2
     var billTotal = 0.0
-    var howMuchToPay = 0.0
+    var billValue = "0.0"
+    
     
 
     @IBOutlet weak var billTextField: UITextField!
@@ -28,6 +29,13 @@ class CalculatorViewController: UIViewController {
         
         //Dismiss the keyboard when the user chooses one of the tip values.
         billTextField.endEditing(true)
+        
+        
+        //Seleccion de botones
+        zeroPctButton.isSelected = false
+        tenPctButton.isSelected = false
+        twentyPctButton.isSelected = false
+        sender.isSelected = true
         
         let buttonTitle = sender.currentTitle!
         let buttonTitleMinusPercentSign = String(buttonTitle.dropLast())
@@ -47,17 +55,26 @@ class CalculatorViewController: UIViewController {
         }
     
 
-
     @IBAction func calculatedPressed(_ sender: UIButton) {
             
         //Obtenemos el texto que el usuario ingresó en billTextField
         let bill = billTextField.text!
-        
         let billAsNumber = round(Double(bill)!)
+        billTotal = ((billAsNumber * tip) + billAsNumber) / Double(numberOfPeople)
         
-        howMuchToPay = ((billAsNumber * tip) + billAsNumber) / Double(numberOfPeople)
+        billValue = String(format: "%.2f", billTotal)
         
-        print(howMuchToPay)
+        self.performSegue(withIdentifier: "goToResult", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToResult" {
+            let destinationVC = segue.destination as! ResultsViewController
+            destinationVC.billValue = billValue
+            destinationVC.numberOfPeople = numberOfPeople
+            destinationVC.tip = tip
+            
+        }
     }
 }
 
